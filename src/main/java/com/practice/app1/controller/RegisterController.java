@@ -1,4 +1,4 @@
-package com.practice.app1;
+package com.practice.app1.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -7,7 +7,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/register")
 public class RegisterController {
     @RequestMapping("/add")
-    public String register(){
-        return "a";
+    public String registeradd(){
+        return "registerForm";
+    }
+
+    @RequestMapping("/save")
+    public String registersave(){
+        return "registerInfo";
     }
 }
