@@ -1,1 +1,1 @@
-# Practice1
+spring framework 연습
