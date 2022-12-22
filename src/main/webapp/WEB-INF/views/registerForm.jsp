@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=utf-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ page import="java.net.URLDecoder"%>
 
 <!DOCTYPE html>
@@ -77,10 +78,13 @@
   </style>
 </head>
 <body>
-  <form action="<c:url value="/register/save"/>" method="POST" onsubmit="return formCheck(this)">
+  <%-- <form action="<c:url value="/register/save"/>" method="POST" onsubmit="return formCheck(this)"> --%>
+  <form:form modelAttribute="user">
     <div class="container">
       <h1>Register</h1>
       <p>Please fill in this form to create an account.</p>
+      <%-- <div id="msg" class="msg"> ${URLDecoder.decode(param.msg, "utf-8")}</div> --%>
+      <div id="msg" class="msg"><form:errors path="id"/></div>
       <hr>
 
       <label for="id"><b>ID</b></label>
@@ -101,7 +105,7 @@
       <button class="registerbtn">Register</button>
       <p>Already have an account? <a href="#">Sign in</a>.</p>
     </div>
-  </form>
+  </form:form>
   <script>
     function formCheck(frm) {
       let msg ='';
@@ -111,8 +115,8 @@
         return false;
       }
 
-      if(frm.pwd.value.length<3) {
-        setMessage('pwd의 길이는 3이상이어야 합니다.', frm.pwd);
+      if(frm.psw.value.length<3) {
+        setMessage('psw의 길이는 3이상이어야 합니다.', frm.psw);
         return false;
       }
 

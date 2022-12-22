@@ -8,7 +8,7 @@
 </head>
 <body>
 <h1>id=${param.id}</h1>
-<h1>pwd=${param.pwd}</h1>
+<h1>pwd=${param.psw}</h1>
 <h1>name=${param.name}</h1>
 <h1>email=${param.email}</h1>
 <h1>birth=${param.birth}</h1>

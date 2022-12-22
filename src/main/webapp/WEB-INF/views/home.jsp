@@ -21,6 +21,4 @@
 </div>
 <div style="text-align:center">
 	<h1>This is HOME</h1>
-	<h1>This is HOME</h1>
-	<h1>This is HOME</h1>
 </div>
