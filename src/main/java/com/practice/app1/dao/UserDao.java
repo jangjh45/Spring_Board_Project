@@ -4,4 +4,5 @@ import com.practice.app1.domain.User;
 
 public interface UserDao {
     int insertUser(User user);
+    User selectUser(String id);
 }

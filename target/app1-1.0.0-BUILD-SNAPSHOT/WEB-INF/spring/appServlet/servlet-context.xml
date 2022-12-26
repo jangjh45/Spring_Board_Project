@@ -27,6 +27,8 @@
 			base-package="com.practice.app1">
 	</context:component-scan>
 
+<!--	<view-controller path="/" view-name="index"/>-->
+
 	<beans:bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
 		<beans:property name="basenames">
 			<beans:list>

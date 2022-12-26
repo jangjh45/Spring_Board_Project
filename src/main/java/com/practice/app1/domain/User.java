@@ -11,6 +11,7 @@ public class User {
     private Date birth;
     private Date reg_date;
 
+    public User () {}
     public User(String id, String psw, String name, String email, Date birth) {
         this.id = id;
         this.psw = psw;
