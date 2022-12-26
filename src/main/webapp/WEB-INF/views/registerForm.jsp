@@ -56,7 +56,7 @@
 
     /* Set a style for the submit button */
     .registerbtn {
-      background-color: #04AA6D;
+      background-color: #000000;
       color: white;
       padding: 16px 20px;
       margin: 8px 0;
@@ -72,7 +72,7 @@
 
     /* Add a blue text color to links */
     a {
-      color: dodgerblue;
+      color: #000000;
     }
 
   </style>

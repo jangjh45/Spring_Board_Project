@@ -8,10 +8,11 @@ public class User {
     private String psw;
     private String name;
     private String email;
-    private String birth;
+    private Date birth;
     private Date reg_date;
 
-    public User(String id, String psw, String name, String email, String birth) {
+    public User () {}
+    public User(String id, String psw, String name, String email, Date birth) {
         this.id = id;
         this.psw = psw;
         this.name = name;
@@ -76,11 +77,11 @@ public class User {
         this.email = email;
     }
 
-    public String getBirth() {
+    public Date getBirth() {
         return birth;
     }
 
-    public void setBirth(String birth) {
+    public void setBirth(Date birth) {
         this.birth = birth;
     }
 

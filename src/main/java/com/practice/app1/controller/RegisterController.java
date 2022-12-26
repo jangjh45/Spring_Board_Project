@@ -12,7 +12,6 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.validation.Valid;
 import java.text.SimpleDateFormat;
@@ -44,7 +43,7 @@ public class RegisterController {
         // User객체를 검증한 결과에 에러가 있으면, registerForm을 이용해서 에러를 보여줘야 함.
         if(!result.hasErrors()) {
             // 2. DB에 신규회원 정보를 저장
-            int rowCnt = userDao.insert(user);
+            int rowCnt = userDao.insertUser(user);
 
             if(rowCnt!=FAIL) {
                 return "registerInfo";
