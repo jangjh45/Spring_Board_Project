@@ -9,10 +9,10 @@ import org.springframework.stereotype.Repository;
 public class UserDaoImpl implements UserDao {
     @Autowired
     private SqlSession session;
-    private static String namespace = "com.practice.app1.dao.UserMapper.";
+    private static String namespace = "com.practice.app1.mapper.UserMapper.";
 
     @Override
-    public int insert(User user) throws Exception {
+    public int insert(User user) {
         return session.insert(namespace+"RegisterInsert", user);
     }
 
