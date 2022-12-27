@@ -2,6 +2,7 @@ package com.practice.app1.controller;
 
 import com.practice.app1.dao.UserDao;
 import com.practice.app1.domain.User;
+import com.practice.app1.service.UserService;
 import com.practice.app1.validator.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -21,7 +22,7 @@ import java.util.Date;
 @RequestMapping("/register")
 public class RegisterController {
     @Autowired
-    UserDao userDao;
+    UserService userService;
     final int FAIL = 0;
 
     @InitBinder
@@ -43,7 +44,7 @@ public class RegisterController {
         // User객체를 검증한 결과에 에러가 있으면, registerForm을 이용해서 에러를 보여줘야 함.
         if(!result.hasErrors()) {
             // 2. DB에 신규회원 정보를 저장
-            int rowCnt = userDao.insertUser(user);
+            int rowCnt = userService.UserInsert(user);
 
             if(rowCnt!=FAIL) {
                 return "registerInfo";

@@ -1,26 +1,25 @@
 package com.practice.app1.controller;
 
-import java.net.URLEncoder;
+import com.practice.app1.dao.UserDao;
+import com.practice.app1.domain.User;
+import com.practice.app1.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import com.practice.app1.dao.UserDao;
-import com.practice.app1.domain.User;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import java.net.URLEncoder;
 
 @Controller
 @RequestMapping("/login")
 public class LoginController {
     @Autowired
-    UserDao userDao;
+    UserService userService;
 
     @GetMapping("/login")
     public String loginForm() {
@@ -58,8 +57,8 @@ public class LoginController {
         return "redirect:"+toURL;
     }
 
-    private boolean loginCheck(String id, String psw) {
-        User user = userDao.selectUser(id);
+    private boolean loginCheck(String id, String psw) throws Exception {
+        User user = userService.UserSelect(id);
 
         if(user==null)
             return false;

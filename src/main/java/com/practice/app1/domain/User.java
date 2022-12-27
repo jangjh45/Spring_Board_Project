@@ -11,26 +11,14 @@ public class User {
     private Date birth;
     private Date reg_date;
 
-    public User () {}
-    public User(String id, String psw, String name, String email, Date birth) {
+    public User() {}
+    public User(String id, String psw, String name, String email, Date birth, Date reg_date) {
         this.id = id;
         this.psw = psw;
         this.name = name;
         this.email = email;
         this.birth = birth;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User)) return false;
-        User user = (User) o;
-        return id.equals(user.id) && Objects.equals(psw, user.psw) && Objects.equals(name, user.name) && Objects.equals(email, user.email) && Objects.equals(birth, user.birth);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, psw, name, email, birth);
+        this.reg_date = reg_date;
     }
 
     @Override
@@ -40,9 +28,22 @@ public class User {
                 ", psw='" + psw + '\'' +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
-                ", birth='" + birth + '\'' +
+                ", birth=" + birth +
                 ", reg_date=" + reg_date +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+        User user = (User) o;
+        return id.equals(user.id) && Objects.equals(psw, user.psw) && Objects.equals(name, user.name) && Objects.equals(email, user.email) && Objects.equals(birth, user.birth) && Objects.equals(reg_date, user.reg_date);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, psw, name, email, birth, reg_date);
     }
 
     public String getId() {
