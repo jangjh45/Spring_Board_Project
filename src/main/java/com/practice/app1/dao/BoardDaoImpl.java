@@ -30,7 +30,7 @@ public class BoardDaoImpl implements BoardDao {
     public int delete(Integer bno, String writer) throws Exception {
         Map map = new HashMap();
         map.put("bno", bno);
-        map.put("write", writer);
+        map.put("writer", writer);
         return session.delete(namespace+"delete", map);
     }
 
