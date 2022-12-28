@@ -18,7 +18,15 @@
         <li><a href="<c:url value='/register/add'/>">Sign in</a></li>
         <li><a href=""><i class="fas fa-search small"></i></a></li>
     </ul>
-</div><div style="text-align:center">
+</div>
+<script>
+    let msg = "${msg}"
+    if(msg=="WRITE_OK") alert("등록되었습니다.");
+    if(msg=="DELETE_OK") alert("삭제되었습니다.");
+    if(msg=="DELETE_ERROR") alert("삭제 실패");
+</script>
+<div style="text-align:center">
+    <button type="button" id="writeBnt" onclick="location.href='<c:url value="/board/write"/>'">글쓰기</button>
     <table border="1">
         <tr>
             <th>번호</th>
