@@ -1,11 +1,14 @@
 package com.practice.app1.dao;
 
 import com.practice.app1.domain.BoardDto;
+import com.practice.app1.domain.SearchCondition;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 
@@ -14,6 +17,42 @@ import static org.junit.Assert.assertTrue;
 public class BoardDaoImplTest {
     @Autowired
     private BoardDao boardDao;
+
+    @Test
+    public void searchResultCntTest() throws Exception{
+        boardDao.deleteAll();
+        for(int i=1; i<=20; i++){
+            BoardDto boardDto = new BoardDto("title"+i, "aweowafuihaksdjfh", "asdfasdf"+i);
+            boardDao.insert(boardDto);
+        }
+        SearchCondition sc = new SearchCondition(1, 10, "title2", "T"); // title1%
+        int cnt = boardDao.searchResultCnt(sc);
+        System.out.println("cnt = " + cnt);
+        assertTrue(cnt==2); // 1~20, title2, title20
+
+        sc = new SearchCondition(1, 10, "asdfasdf2", "W"); // title1%
+        cnt = boardDao.searchResultCnt(sc);
+        System.out.println("cnt = " + cnt);
+        assertTrue(cnt==2); // 1~20, title2, title20
+    }
+
+    @Test
+    public void searchSelectPageTest() throws Exception{
+        boardDao.deleteAll();
+        for(int i=1; i<=20; i++){
+            BoardDto boardDto = new BoardDto("title"+i, "aweowafuihaksdjfh", "asdfasdf"+i);
+            boardDao.insert(boardDto);
+        }
+        SearchCondition sc = new SearchCondition(1, 10, "title2", "T"); // title1%
+        List<BoardDto> list = boardDao.searchSelectPage(sc);
+        System.out.println("list = " + list);
+        assertTrue(list.size()==2); // 1~20, title2, title20
+
+        sc = new SearchCondition(1, 10, "asdfasdf2", "W"); // title1%
+        list = boardDao.searchSelectPage(sc);
+        System.out.println("list = " + list);
+        assertTrue(list.size()==2); // 1~20, title2, title20
+    }
 
     @Test
     public void insertTestData() throws Exception{

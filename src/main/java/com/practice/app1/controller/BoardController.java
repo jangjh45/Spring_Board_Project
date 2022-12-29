@@ -2,6 +2,7 @@ package com.practice.app1.controller;
 
 import com.practice.app1.domain.BoardDto;
 import com.practice.app1.domain.PageHandler;
+import com.practice.app1.domain.SearchCondition;
 import com.practice.app1.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,9 +14,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.HashMap;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/board")
@@ -132,37 +134,32 @@ public class BoardController {
 
     @GetMapping("/list")
     // page와 pageSize를 얻는다.
-    public String list(Integer page, Integer pageSize, Model m, HttpServletRequest request) {
+    public String list(SearchCondition sc, Model m, HttpServletRequest request) {
 
         // 로그인을 안했으면 로그인 화면으로 이동
         if(!loginCheck(request))
             return "redirect:/login/login?toURL="+request.getRequestURL();
 
-        // 로그인 했다면 board 첫 페이지가 보이도록 함
-        if(page==null) page=1;
-        if(pageSize==null) pageSize=10;
-
         try {
 
-            int totalCnt = boardService.getCount();
-            PageHandler pageHandler = new PageHandler(totalCnt, page, pageSize);
+            int totalCnt = boardService.getSearchResultCnt(sc);
+            m.addAttribute("totalCnt", totalCnt);
 
-            // BoardMapper에 있는 selectPage의 offset과 pageSize를 넘겨줄 준비
-            Map map = new HashMap();
-            map.put("offset", (page-1)*pageSize);
-            map.put("pageSize", pageSize);
+            PageHandler pageHandler = new PageHandler(totalCnt, sc);
 
             // map을 boardService에 넘겨준다.
             // BoardMapper에 있는 selectPage의 offset과 pageSize의 값이
             // DB를 거쳐 반환된 값이 list에 저장
-            List<BoardDto> list = boardService.getPage(map);
-
+            List<BoardDto> list = boardService.getSearchResultPage(sc);
             m.addAttribute("list", list);
             m.addAttribute("ph", pageHandler);
-            m.addAttribute("page", page);
-            m.addAttribute("pageSize", pageSize);
+
+            Instant startOfToday = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant();
+            m.addAttribute("startOfToday", startOfToday.toEpochMilli());
         } catch (Exception e) {
             e.printStackTrace();
+            m.addAttribute("msg", "LIST_ERR");
+            m.addAttribute("totalCnt", 0);
         }
 
         return "boardList"; // 로그인을 한 상태이면, 게시판 화면으로 이동
