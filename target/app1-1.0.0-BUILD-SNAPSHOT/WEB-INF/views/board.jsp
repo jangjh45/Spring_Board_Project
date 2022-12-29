@@ -21,7 +21,8 @@
   </ul>
 </div>
 <script>
-  let msg = "${msg}"
+  let msg = "${param.msg}"
+  if(msg=="MODIFY_ERROR") alert("게시물 수정에 실패했습니다. 다시 시도해 주세요.");
   if(msg=="WRITE_ERROR") alert("게시물 등록에 실패했습니다. 다시 시도해 주세요.");
 </script>
 </div><div style="text-align:center">

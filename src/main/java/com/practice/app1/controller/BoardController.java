@@ -26,12 +26,13 @@ public class BoardController {
 
     @PostMapping("/modify") // BoardDto 로 입력한 게시물을 받는다.
     public String modify(BoardDto boardDto, Integer page, Integer pageSize,
-                         Model m, HttpSession session, RedirectAttributes arttr) {
+                         Model m, HttpSession session) {
         // BoardDto 에 세션에 있는 작성자 id를 넣어야 한다.
         // getAttribute 가 Object 라서 형변환 해줘야함
         String writer = (String) session.getAttribute("id");
         // 작성자를 넣는다.
         boardDto.setWriter(writer);
+
 
         try {
             int rowCnt = boardService.modify(boardDto);
@@ -39,7 +40,7 @@ public class BoardController {
             if(rowCnt!=1)
                 throw new Exception("Write faild");
 
-            arttr.addFlashAttribute("msg", "MODIFY_OK");
+            m.addAttribute("msg", "MODIFY_OK");
         } catch (Exception e) {
             e.printStackTrace();
             // 예외가 발생하면 boardDto 에 있는 작성했던 자료들을 다시 보낸다.
@@ -50,6 +51,7 @@ public class BoardController {
         }
         m.addAttribute("page", page);
         m.addAttribute("pageSize", pageSize);
+
         return "redirect:/board/list";
     }
 
@@ -87,12 +89,9 @@ public class BoardController {
 
     @PostMapping("/remove")
     public String remove(Integer bno, Integer page, Integer pageSize, Model m,
-                         HttpSession session,
-                         RedirectAttributes rattr) {
+                         HttpSession session) {
         // 다른 작성자는 삭제 불가능 (로그인 한 id와 작성자가 같아야 삭제가능)
         String writer = (String)session.getAttribute("id");
-        m.addAttribute("page", page);
-        m.addAttribute("pageSize", pageSize);
 
         try {
             // BoardMapper에 bno와 작성자가 일치하는 게시물 삭제
@@ -108,6 +107,9 @@ public class BoardController {
             e.printStackTrace();
             m.addAttribute("msg", "DELETE_ERROR");
         }
+        m.addAttribute("page", page);
+        m.addAttribute("pageSize", pageSize);
+
         // 윗 model 두줄이 ~list 뒤에 ?page=&pageSize 자동으로 추가됨
         return "redirect:/board/list";
     }
