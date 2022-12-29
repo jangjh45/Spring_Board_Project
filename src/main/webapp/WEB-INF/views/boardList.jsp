@@ -20,7 +20,8 @@
     </ul>
 </div>
 <script>
-    let msg = "${msg}"
+    let msg = "${param.msg}"
+    if(msg=="MODIFY_OK") alert("수정되었습니다.");
     if(msg=="WRITE_OK") alert("등록되었습니다.");
     if(msg=="DELETE_OK") alert("삭제되었습니다.");
     if(msg=="DELETE_ERROR") alert("삭제 실패");
