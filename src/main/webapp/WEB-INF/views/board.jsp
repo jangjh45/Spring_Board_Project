@@ -82,7 +82,7 @@
   </ul>
 </div>
 <script>
-  let msg = "${param.msg}";
+  let msg = "${msg}";
   if(msg=="WRITE_ERROR") alert("게시물 등록에 실패하였습니다. 다시 시도해 주세요.");
   if(msg=="MODIFY_ERROR") alert("게시물 수정에 실패하였습니다. 다시 시도해 주세요.");
 </script>
@@ -152,7 +152,7 @@
       }
 
       // 2. 수정 상태이면, 수정된 내용을 서버로 전송
-      form.attr("action", "<c:url value='/board/modify${searchCondition.queryString}'/>");
+      form.attr("action", "<c:url value='/board/modify'/>?page=${page}&pageSize=${pageSize}");
       form.attr("method", "post");
       if(formCheck())
         form.submit();
@@ -162,13 +162,13 @@
       if(!confirm("정말로 삭제하시겠습니까?")) return;
 
       let form = $("#form");
-      form.attr("action", "<c:url value='/board/remove${searchCondition.queryString}'/>");
+      form.attr("action", "<c:url value='/board/remove'/>?page=${page}&pageSize=${pageSize}");
       form.attr("method", "post");
       form.submit();
     });
 
     $("#listBtn").on("click", function(){
-      location.href="<c:url value='/board/list${searchCondition.queryString}'/>";
+      location.href="<c:url value='/board/list'/>?page=${page}&pageSize=${pageSize}";
     });
   });
 </script>

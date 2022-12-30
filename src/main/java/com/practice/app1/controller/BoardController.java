@@ -28,33 +28,31 @@ public class BoardController {
 
     @PostMapping("/modify") // BoardDto 로 입력한 게시물을 받는다.
     public String modify(BoardDto boardDto, Integer page, Integer pageSize,
-                         Model m, HttpSession session) {
+                         Model m, RedirectAttributes rattr, HttpSession session) {
         // BoardDto 에 세션에 있는 작성자 id를 넣어야 한다.
         // getAttribute 가 Object 라서 형변환 해줘야함
         String writer = (String) session.getAttribute("id");
         // 작성자를 넣는다.
         boardDto.setWriter(writer);
 
+        rattr.addAttribute("page", page);
+        rattr.addAttribute("pageSize", pageSize);
 
         try {
-            int rowCnt = boardService.modify(boardDto);
+            if(boardService.modify(boardDto)!=1)
+                throw new Exception("Modify faild");
 
-            if(rowCnt!=1)
-                throw new Exception("Write faild");
+            rattr.addFlashAttribute("msg", "MODIFY_OK");
+            return "redirect:/board/list";
 
-            m.addAttribute("msg", "MODIFY_OK");
         } catch (Exception e) {
             e.printStackTrace();
             // 예외가 발생하면 boardDto 에 있는 작성했던 자료들을 다시 보낸다.
             m.addAttribute(boardDto);
-            m.addAttribute("msg", "MODIFY_ERROR");
+            rattr.addFlashAttribute("msg", "MODIFY_ERROR");
             // 자신이 작성했던 화면으로 돌아간다.
             return "board";
         }
-        m.addAttribute("page", page);
-        m.addAttribute("pageSize", pageSize);
-
-        return "redirect:/board/list";
     }
 
     @PostMapping("/write") // BoardDto 로 입력한 게시물을 받는다.
@@ -66,21 +64,19 @@ public class BoardController {
         boardDto.setWriter(writer);
 
         try {
-            int rowCnt = boardService.write(boardDto);
-
-            if(rowCnt!=1)
+            if(boardService.write(boardDto)!=1)
                 throw new Exception("Write faild");
 
             arttr.addFlashAttribute("msg", "WRITE_OK");
+            return "redirect:/board/list";
         } catch (Exception e) {
             e.printStackTrace();
             // 예외가 발생하면 boardDto 에 있는 작성했던 자료들을 다시 보낸다.
             m.addAttribute(boardDto);
-            m.addAttribute("msg", "WRITE_ERROR");
+            arttr.addFlashAttribute("msg", "WRITE_ERROR");
             // 자신이 작성했던 화면으로 돌아간다.
             return "board";
         }
-        return "redirect:/board/list";
     }
 
     @GetMapping("/write")
@@ -91,28 +87,21 @@ public class BoardController {
 
     @PostMapping("/remove")
     public String remove(Integer bno, Integer page, Integer pageSize, Model m,
-                         HttpSession session) {
-        // 다른 작성자는 삭제 불가능 (로그인 한 id와 작성자가 같아야 삭제가능)
+                         RedirectAttributes rattr, HttpSession session) {
         String writer = (String)session.getAttribute("id");
+        String msg = "DELETE_OK";
 
         try {
-            // BoardMapper에 bno와 작성자가 일치하는 게시물 삭제
-            int rowCnt = boardService.remove(bno, writer);
-            if(rowCnt!=1)
-                // remove 실패하면 예외를 던짐
-                throw new Exception("board remove error");
-
-
-            // RedirectAttributes rattr 는 메시지 한번만 쓰고 없어짐(세션을 이용하는 것)
-            m.addAttribute("msg", "DELETE_OK");
+            if(boardService.remove(bno, writer)!=1)
+                throw new Exception("Delete failed.");
         } catch (Exception e) {
             e.printStackTrace();
-            m.addAttribute("msg", "DELETE_ERROR");
+            msg = "DELETE_ERR";
         }
-        m.addAttribute("page", page);
-        m.addAttribute("pageSize", pageSize);
 
-        // 윗 model 두줄이 ~list 뒤에 ?page=&pageSize 자동으로 추가됨
+        rattr.addAttribute("page", page);
+        rattr.addAttribute("pageSize", pageSize);
+        rattr.addFlashAttribute("msg", msg);
         return "redirect:/board/list";
     }
 

@@ -178,11 +178,10 @@
     </ul>
 </div>
 <script>
-    let msg = "${param.msg}";
+    let msg = "${msg}";
     if(msg=="LIST_ERROR")  alert("게시물 목록을 가져오는데 실패했습니다. 다시 시도해 주세요.");
     if(msg=="READ_ERROR")  alert("삭제되었거나 없는 게시물입니다.");
     if(msg=="DELETE_ERROR")   alert("삭제되었거나 없는 게시물입니다.");
-
     if(msg=="DELETE_OK")    alert("성공적으로 삭제되었습니다.");
     if(msg=="WRITE_OK")    alert("성공적으로 등록되었습니다.");
     if(msg=="MODIFY_OK")    alert("성공적으로 수정되었습니다.");
