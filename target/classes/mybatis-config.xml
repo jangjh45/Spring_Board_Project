@@ -7,5 +7,6 @@
         <typeAlias alias="User" type="com.practice.app1.domain.User"/>
         <typeAlias alias="BoardDto" type="com.practice.app1.domain.BoardDto"/>
         <typeAlias alias="SearchCondition" type="com.practice.app1.domain.SearchCondition"/>
+        <typeAlias alias="CommentDto" type="com.practice.app1.domain.CommentDto"/>
     </typeAliases>
 </configuration>
