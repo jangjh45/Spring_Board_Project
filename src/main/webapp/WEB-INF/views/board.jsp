@@ -8,8 +8,8 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>fastcampus</title>
-  <link rel="stylesheet" href="<c:url value='/css/menu.css'/>">
+  <title>Practice1</title>
+<%--  <link rel="stylesheet" href="<c:url value='/css/menu.css'/>">--%>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <script src="https://code.jquery.com/jquery-1.11.3.js"></script>
   <style>
@@ -73,7 +73,7 @@
 <body>
 <div id="menu">
   <ul>
-    <li id="logo">fastcampus</li>
+    <li id="logo">Practice1</li>
     <li><a href="<c:url value='/'/>">Home</a></li>
     <li><a href="<c:url value='/board/list'/>">Board</a></li>
     <li><a href="<c:url value='${loginOutLink}'/>">${loginOut}</a></li>
@@ -107,9 +107,28 @@
     <button type="button" id="listBtn" class="btn btn-list"><i class="fa fa-bars"></i> 목록</button>
   </form>
 </div>
+<div class="comment-box">
+  <h3>댓글</h3>
+  comment: <input type="text" name="comment"><br>
+  <button id="sendBtn" type="button">SEND</button>
+  <button id="modBtn" type="button">수정</button>
+
+  <div id="commentList"></div>
+</div>
 <script>
+  let bno = "${boardDto.bno}";
+  let showList = function (bno){
+    $.ajax({
+      type:'GET', // 요청 메서드
+      url:'/app1/comments?bno='+bno, // 요청 URI
+      success:function (result){$("#commentList").html(toHtml(result));},
+      error:function (){alert("error")} // 에러가 발생했을때, 호출될 함수
+    });
+  }
+
   $(document).ready(function(){
-    let formCheck = function() {
+    showList(bno); // 게시글에 진입하면 댓글 목록이 나타남!!
+    let formCheck = function(){
       let form = document.getElementById("form");
       if(form.title.value=="") {
         alert("제목을 입력해 주세요.");
@@ -124,7 +143,7 @@
       }
       return true;
     }
-
+    // -----게시글-----
     $("#writeNewBtn").on("click", function(){
       location.href="<c:url value='/board/write'/>";
     });
@@ -143,7 +162,7 @@
       let isReadonly = $("input[name=title]").attr('readonly');
 
       // 1. 읽기 상태이면, 수정 상태로 변경
-      if(isReadonly=='readonly') {
+      if(isReadonly=='readonly'){
         $(".writing-header").html("게시판 수정");
         $("input[name=title]").attr('readonly', false);
         $("textarea").attr('readonly', false);
@@ -170,7 +189,118 @@
     $("#listBtn").on("click", function(){
       location.href="<c:url value='/board/list'/>?page=${page}&pageSize=${pageSize}";
     });
+
+    // -----댓글 쓰기-----
+    $("#sendBtn").click(function (){
+      // 입력한 내용을 가지고와서 변수에 담음
+      let comment = $("input[name=comment]").val();
+
+      // 댓글을 공백으로 보냈을때 처리하는 코드
+      if(comment.trim()==''){
+        alert("댓글을 입력해주세요.");
+        $("input[name=comment]").focus()
+        return;
+      }
+
+      $.ajax({
+        type: 'POST',
+        url: '/app1/comments?bno='+bno,
+        headers: {"content-type": "application/json"},
+        // JSON으로 보내면 컨트롤러가 받아서 자바객체로 변환해서 처리(@RequestBody)
+        data: JSON.stringify({bno:bno, comment:comment}),
+        success: function (result){
+          alert(result);
+          showList(bno);
+        },
+        error: function (){alert("error")}
+      });
+    });
+
+    // -----댓글 수정-----
+    // 댓글에 있는 수정버튼을 눌렀을 때!!!!!!
+    // mod 버튼이 #commentList 안에 있기 때문에 #commentList 에 이벤트를 걸어야 한다.
+    $("#commentList").on("click", ".modBtn", function (){
+      let cno = $(this).parent().attr("data-cno");
+      // 클릭된 수정버튼의 부모(li)에 있는 span만 가지고 오는것
+      let comment = $("span.comment", $(this).parent()).text();
+
+      // 1. comment의 내용을 input에 뿌려주기
+      $("input[name=comment]").val(comment);
+      // 2. cno전달하기
+      $("#modBtn").attr("data-cno", cno);
+    });
+
+    // -----댓글 수정 후 수정버튼-----
+    // 댓글을 수정하고 수정버튼 누르면 작동되는 코드!!!!!
+    $("#modBtn").click(function (){
+      // 버튼에 있는 cno 를 가지고 온다.
+      let cno = $(this).attr("data-cno");
+      // 입력한 내용을 가지고와서 변수에 담음
+      let comment = $("input[name=comment]").val();
+
+      // 댓글을 공백으로 보냈을때 처리하는 코드
+      if(comment.trim()==''){
+        alert("댓글을 입력해주세요.");
+        $("input[name=comment]").focus()
+        return;
+      }
+
+      $.ajax({
+        type: 'PATCH',
+        url: '/app1/comments/'+cno,
+        headers: {"content-type": "application/json"},
+        // JSON으로 보내면 컨트롤러가 받아서 자바객체로 변환해서 처리(@RequestBody)
+        data: JSON.stringify({cno:cno, comment:comment}),
+        success: function (result){
+          alert(result);
+          showList(bno);
+        },
+        error: function (){alert("error")}
+      });
+    });
+
+    // -----댓글 삭제-----
+    // del 버튼이 #commentList 안에 있기 때문에 #commentList 에 이벤트를 걸어야 한다.
+    // $(".delBtn").click(function (){ // 이거는 잘못된 줄(예시)!
+    $("#commentList").on("click", ".delBtn", function (){
+      let cno = $(this).parent().attr("data-cno");
+      let bno = $(this).parent().attr("data-bno");
+
+      $.ajax({
+        type:'DELETE',
+        url:'/app1/comments/'+cno+'?bno='+bno,
+        // 삭제한 후 목록을 새로 가지고 와야함(목록 갱신)
+        success:function (result){
+          alert(result);
+          showList(bno);
+        },
+        error:function (){alert("error")}
+      });
+    });
+
   });
+
+  // toSting 이랑 비슷?? ,댓글들이 들어오면 HTML로 바꿈
+  // comments - 배열로 들어옴
+  let toHtml = function (comments){
+    let tmp = "<ul>";
+
+    // 배열에서 댓글안 내용을 하나씩 가지고와서 tmp 에 계속 쌓음
+    // 띄어쓰기 잘해야함 안하면 구분이 안되서 오류남!!!!!
+    comments.forEach(function (comment){
+      tmp += '<li data-cno='+comment.cno
+      tmp += ' data-pcno='+comment.pcno
+      tmp += ' data-bno='+comment.bno +'>'
+      // spen 태그는 나중에 읽어오기 쉬움 (수정할때)
+      tmp += ' commenter=<span class="commenter">' + comment.commenter + '</span>'
+      tmp += ' comment=<span class="comment">' + comment.comment + '</span>'
+      tmp += ' up_date=' + comment.up_date
+      tmp += ' <button class="delBtn">삭제</button>' // 삭제버튼 누르면 댓글 삭제 요청
+      tmp += ' <button class="modBtn">수정</button>' // 수정버튼 누르면 댓글 수정 요청
+      tmp += '</li>'
+    })
+    return tmp + "</ul>";
+  }
 </script>
 </body>
 </html>
