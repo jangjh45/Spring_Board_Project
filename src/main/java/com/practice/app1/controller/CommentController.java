@@ -24,8 +24,9 @@ public class CommentController {
     // CommentDto 입력한 내용을 가지고 와야한다. @RequestBody 는 JSON객체를 JAVA객체로 변환해서 dto에 줌
     // 쿼리 스트링(comments?bno=1029)이 아니고 REST방식(/comments/1)으로 가지고오면
     // "/comments/{cno}" 이렇게 쓰고 @PathVariable 를 추가해주어야 한다.
-    public ResponseEntity<String> modify(@PathVariable Integer cno, @RequestBody CommentDto dto) {
-//        String commenter = (String) session.getAttribute("id");
+    public ResponseEntity<String> modify(@PathVariable Integer cno, @RequestBody CommentDto dto, HttpSession session) {
+        String commenter = (String) session.getAttribute("id");
+        dto.setCommenter(commenter);
         dto.setCno(cno);
         System.out.println("cno = " + cno);
 
@@ -46,8 +47,7 @@ public class CommentController {
     // CommentDto 입력한 내용을 가지고 와야한다. @RequestBody 는 JSON객체를 JAVA객체로 변환해서 dto에 줌
     public ResponseEntity<String> write(@RequestBody CommentDto dto, Integer bno, HttpSession session) {
         // comenter 는 세션에서 가지고와야한다. 다른사람이 아닌 댓글 작성자가 삭제해야 하니까
-//        String commenter = (String) session.getAttribute("id");
-        String commenter = "asdfasdf"; // 하드코딩
+        String commenter = (String) session.getAttribute("id");
         dto.setCommenter(commenter);
         dto.setBno(bno);
         System.out.println("dto = " + dto);
@@ -71,8 +71,7 @@ public class CommentController {
     // "/comments/{cno}" 이렇게 쓰고 @PathVariable 를 추가해주어야 한다.
     public ResponseEntity<String> remove(@PathVariable Integer cno, Integer bno, HttpSession session) {
         // comenter 는 세션에서 가지고와야한다. 다른사람이 아닌 댓글 작성자가 삭제해야 하니까
-//        String commenter = (String) session.getAttribute("id");
-        String commenter = "asdfasdf"; // 하드코딩
+        String commenter = (String) session.getAttribute("id");
         try {
             // 삭제하려면 필요한게 cno, bno, commenter 이다.
             int rowCnt = commentService.remove(cno, bno, commenter); // 결과는 1,2로 오니까 반환값 int
@@ -95,6 +94,7 @@ public class CommentController {
         List<CommentDto> list = null;
         try {
             list = commentService.getList(bno);
+            System.out.println("list = " + list);
             return new ResponseEntity<List<CommentDto>>(list, HttpStatus.OK); // 200
         } catch (Exception e) {
             e.printStackTrace();
