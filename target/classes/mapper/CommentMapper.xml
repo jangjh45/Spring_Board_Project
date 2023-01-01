@@ -25,6 +25,7 @@
     </insert>
 
     <select id="selectAll" parameterType="int" resultType="CommentDto">
+                        # pcno가 nill이면 cno를 써라.
         SELECT cno, bno, ifnull(pcno, cno) as pcno, comment, commenter, reg_date, up_date
         FROM comment
         WHERE bno = #{bno}
