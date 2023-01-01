@@ -114,6 +114,10 @@
   <button id="modBtn" type="button">수정</button>
 
   <div id="commentList"></div>
+  <div id="replyForm" style="display: none">
+    <input type="text" name="replyComment">
+    <button id="wrtRepByn" type="button">등록</button>
+  </div>
 </div>
 <script>
   let bno = "${boardDto.bno}";
@@ -143,7 +147,7 @@
       }
       return true;
     }
-    // -----게시글-----
+    // ----------게시글----------
     $("#writeNewBtn").on("click", function(){
       location.href="<c:url value='/board/write'/>";
     });
@@ -190,6 +194,7 @@
       location.href="<c:url value='/board/list'/>?page=${page}&pageSize=${pageSize}";
     });
 
+    // ----------댓글----------
     // -----댓글 쓰기-----
     $("#sendBtn").click(function (){
       // 입력한 내용을 가지고와서 변수에 담음
@@ -214,10 +219,11 @@
         },
         error: function (){alert("error")}
       });
+      // 대댓글 안에 있는 값을 비워야한다.
+      $("input[name=comment]").val('')
     });
 
-    // -----댓글 수정-----
-    // 댓글에 있는 수정버튼을 눌렀을 때!!!!!!
+    // -----댓글 수정----- 댓글에 있는 수정버튼을 눌렀을 때!!!!!!
     // mod 버튼이 #commentList 안에 있기 때문에 #commentList 에 이벤트를 걸어야 한다.
     $("#commentList").on("click", ".modBtn", function (){
       let cno = $(this).parent().attr("data-cno");
@@ -230,7 +236,7 @@
       $("#modBtn").attr("data-cno", cno);
     });
 
-    // -----댓글 수정 후 수정버튼-----
+    // -----댓글 수정작성 후 수정버튼-----
     // 댓글을 수정하고 수정버튼 누르면 작동되는 코드!!!!!
     $("#modBtn").click(function (){
       // 버튼에 있는 cno 를 가지고 온다.
@@ -278,6 +284,50 @@
       });
     });
 
+    // -----대댓글----- 댓글에 있는 대댓글버튼을 눌렀을 때!!!!!!
+    $("#commentList").on("click", ".replyBtn", function (){
+      // 1. replyForm을 옮기고 (li) 부모의 태그 뒤에 붙인다.
+      $("#replyForm").appendTo($(this).parent());
+      // 2. 답글을 입력할 폼을 보여줌
+      $("#replyForm").css("display", "block");
+    });
+
+    // -----대댓글 작성 후 SEND 버튼-----
+    $("#wrtRepByn").click(function (){
+      // 입력한 내용을 가지고와서 변수에 담음
+      let comment = $("input[name=replyComment]").val();
+      // 대댓글의 부모 (대댓글을 쓴 댓글의 번호) pcno 를 가지고옴
+      // 강의 할때 원래 data-cno 이였는데 대댓글에 대댓글을 쓰면 다른 cno가 잡아버림
+      // 해결 방법으로 댓글에도 대댓글에도 같은 숫자가 있는 pcno를 가지고 온다.
+      let pcno = $("#replyForm").parent().attr("data-pcno");
+
+      // 댓글을 공백으로 보냈을때 처리하는 코드
+      if(comment.trim()==''){
+        alert("댓글을 입력해주세요.");
+        $("input[name=comment]").focus()
+        return;
+      }
+
+      $.ajax({
+        type: 'POST',
+        url: '/app1/comments?bno='+bno,
+        headers: {"content-type": "application/json"},
+        // JSON으로 보내면 컨트롤러가 받아서 자바객체로 변환해서 처리(@RequestBody)
+        data: JSON.stringify({pcno:pcno, bno:bno, comment:comment}),
+        success: function (result){
+          alert(result);
+          showList(bno);
+        },
+        error: function (){alert("error")}
+      });
+      // 대댓글이 작성하고 다시 안보이게 해야한다.
+      $("#replyForm").css("display", "none")
+      // 대댓글 안에 있는 값을 비워야한다.
+      $("input[name=replyComment]").val('')
+      // 원래위치로 돌려야한다. (원래 body 아래에 있음)
+      $("#replyForm").appendTo("body");
+    });
+
   });
 
   // toSting 이랑 비슷?? ,댓글들이 들어오면 HTML로 바꿈
@@ -291,12 +341,15 @@
       tmp += '<li data-cno='+comment.cno
       tmp += ' data-pcno='+comment.pcno
       tmp += ' data-bno='+comment.bno +'>'
+      if(comment.cno!=comment.pcno)
+        tmp += 'ㄴ'
       // spen 태그는 나중에 읽어오기 쉬움 (수정할때)
       tmp += ' commenter=<span class="commenter">' + comment.commenter + '</span>'
       tmp += ' comment=<span class="comment">' + comment.comment + '</span>'
       tmp += ' up_date=' + comment.up_date
       tmp += ' <button class="delBtn">삭제</button>' // 삭제버튼 누르면 댓글 삭제 요청
-      tmp += ' <button class="modBtn">수정</button>' // 수정버튼 누르면 댓글 수정 요청
+      tmp += ' <button class="modBtn">수정</button>' // 수정버튼 누르면 댓글 수정 모드 진입
+      tmp += ' <button class="replyBtn">대댓글</button>' // 대댓글 버튼 누르면 대댓글 작성 모드
       tmp += '</li>'
     })
     return tmp + "</ul>";
