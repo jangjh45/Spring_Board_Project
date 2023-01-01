@@ -100,7 +100,7 @@
       <input type="text" placeholder="Enter Email" name="email" id="email" required>
 
       <label for="birth"><b>Birth</b></label>
-      <input type="text" placeholder="YYYYMMDD" name="birth" id="birth" required>
+      <input type="text" placeholder="YYYY-MM-DD" name="birth" id="birth" required>
 
       <button class="registerbtn">Register</button>
       <p>Already have an account? <a href="#">Sign in</a>.</p>

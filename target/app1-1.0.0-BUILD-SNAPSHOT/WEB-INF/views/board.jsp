@@ -219,7 +219,7 @@
         },
         error: function (){alert("error")}
       });
-      // 대댓글 안에 있는 값을 비워야한다.
+      // 댓글 SEND 후 안에 있는 값을 비워야한다.
       $("input[name=comment]").val('')
     });
 

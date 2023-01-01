@@ -47,7 +47,7 @@ public class RegisterController {
             int rowCnt = userService.UserInsert(user);
 
             if(rowCnt!=FAIL) {
-                return "registerInfo";
+                return "index";
             }
         }
         return "registerForm";
